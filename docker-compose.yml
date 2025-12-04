@@ -14,23 +14,26 @@ services:
 
   frontend:
     image: client:v1.0-sgu
-    build: 
+    build:
       context: ./client
       args:
         API_HOST: localhost
         API_PORT: 8081
-        API_BASE: /api/persons
+        API_BASE: /api/users
+        API_PROTOCOL: https   # ⚠️ ahora sí apunta a HTTPS
     container_name: sgu-frontend
     ports:
-      - "3000:80"
+      - "3000:443"
     networks:
       - sgu-net
+    volumes:
+      - certbot-conf:/etc/letsencrypt:ro
     depends_on:
       - database
 
   backend:
     image: server:v1.0-sgu
-    build: 
+    build:
       context: ./server/server
     container_name: sgu-backend
     environment:
@@ -40,10 +43,15 @@ services:
       DB_NAME: SQL-demo
       DB_USER: root
       DB_PASS: root
+      SERVER_SSL_ENABLED: true
+      SERVER_SSL_KEYSTORE: /etc/letsencrypt/live/localhost/keystore.p12
+      SERVER_SSL_KEYSTORE_PASS: changeit
     ports:
-      - "8081:8080"
+      - "8081:8080"   
     networks:
       - sgu-net
+    volumes:
+      - certbot-conf:/etc/letsencrypt:ro
     depends_on:
       - frontend
 
@@ -54,3 +62,7 @@ networks:
 volumes:
   sgu-volume:
     external: true
+  certbot-conf:
+    external: true
+
+    

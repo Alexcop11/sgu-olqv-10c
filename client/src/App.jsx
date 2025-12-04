@@ -3,7 +3,7 @@ import PersonForm from "./modules/components/PersonForm"
 import PersonTable from "./modules/components/PersonTable"
 import SearchBar from "./modules/components/SearchBar"
 
-const API = 'http://localhost:8081/api/persons';
+const API = '/api/persons';
 
 export default function App() {
   const [persons, setPersons] = useState([]);
